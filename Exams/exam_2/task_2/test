@@ -1,0 +1,86 @@
+from unittest import TestCase, main
+
+from project.tennis_player import TennisPlayer
+
+
+class TestTennisPlayer(TestCase):
+
+    def setUp(self):
+        self.player = TennisPlayer('Ivan', 20, 100)
+
+    def test_init(self):
+        self.assertEqual(self.player.name, 'Ivan')
+        self.assertEqual(self.player.age, 20)
+        self.assertEqual(self.player.points, 100)
+        self.assertEqual(self.player.wins, [])
+
+    def test_name_less_than_two_symbols(self):
+        with self.assertRaises(ValueError) as ve:
+            self.player = TennisPlayer('I', 20, 100)
+        self.assertEqual("Name should be more than 2 symbols!", str(ve.exception))
+
+    def test_name_equal_than_two_symbols(self):
+        with self.assertRaises(ValueError) as ve:
+            self.player = TennisPlayer('Iv', 20, 100)
+        self.assertEqual("Name should be more than 2 symbols!", str(ve.exception))
+
+    def test_age_under_eighteen(self):
+        with self.assertRaises(ValueError) as ve:
+            self.player = TennisPlayer('Ivan', 17, 100)
+        self.assertEqual("Players must be at least 18 years of age!", str(ve.exception))
+
+    def test_add_win_if_tournament_name_not_in_wins(self):
+        self.player.add_new_win("Some Tournament")
+        self.assertEqual(self.player.wins, ["Some Tournament"])
+
+        result = self.player.add_new_win("Other Tournament")
+        self.assertIsNone(result)
+        self.assertEqual(self.player.wins, ["Some Tournament", "Other Tournament"])
+
+    def test_add_win_if_tournament_name_in_wins(self):
+        self.player.add_new_win("Some Tournament")
+        self.assertEqual(self.player.wins, ["Some Tournament"])
+
+        result = self.player.add_new_win("Some Tournament")
+        self.assertEqual("Some Tournament has been already added to the list of wins!", result)
+
+    def test_lt_if_points_less_than_the_other(self):
+        self.player = TennisPlayer('Ivan', 20, 100)
+        self.player2 = TennisPlayer('Anton', 20, 110)
+
+        result = self.player < self.player2
+        self.assertEqual('Anton is a top seeded player and he/she is better than Ivan', result)
+
+    def test_lt_if_points_more_than_the_other(self):
+        self.player = TennisPlayer('Ivan', 20, 120)
+        self.player2 = TennisPlayer('Anton', 20, 100)
+
+        result = self.player < self.player2
+        self.assertEqual('Ivan is a better player than Anton', result)
+
+    def test_str_no_win(self):
+        self.player = TennisPlayer('Ivan', 20, 120)
+        self.player.wins = []
+
+        result = str(self.player)
+        self.assertEqual(f"Tennis Player: Ivan\nAge: 20\nPoints: 120.0\nTournaments won: ", result)
+
+    def test_str_with_one_win(self):
+        self.player = TennisPlayer('Ivan', 20, 120)
+        self.player.wins = ["Some Tournament"]
+
+        result = str(self.player)
+        self.assertEqual(f"Tennis Player: Ivan\nAge: 20\nPoints: 120.0\nTournaments won: Some Tournament", result)
+
+    def test_str_with_two_win(self):
+        self.player = TennisPlayer('Ivan', 20, 120)
+        self.player.wins = ["Some Tournament", "Other Tournament"]
+
+        result = str(self.player)
+        self.assertEqual(f"Tennis Player: Ivan\nAge: 20\nPoints: 120.0\nTournaments won: Some Tournament, Other Tournament", result)
+
+
+
+
+if __name__ == '__main__':
+    main()
