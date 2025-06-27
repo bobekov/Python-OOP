@@ -1,0 +1,53 @@
+from unittest import TestCase, main
+
+from project.movie import Movie
+
+
+class TestMovie(TestCase):
+
+    def setUp(self):
+        self.movie = Movie("Troy", 2003, 20)
+
+    def test_init(self):
+        self.assertEqual(self.movie.name, "Troy")
+        self.assertEqual(self.movie.year, 2003)
+        self.assertEqual(self.movie.rating, 20)
+        self.assertEqual(self.movie.actors, [])
+
+    def test_name(self):
+        with self.assertRaises(ValueError) as ve:
+            Movie("", 2003, 20)
+        self.assertEqual("Name cannot be an empty string!", str(ve.exception))
+
+    def test_year(self):
+        with self.assertRaises(ValueError) as ve:
+            Movie("Troy", 1820, 20)
+        self.assertEqual("Year is not valid!", str(ve.exception))
+
+    def test_add_actor_if_actor_in_list(self):
+        self.movie.add_actor("Brad Pit")
+        self.movie.add_actor("Orlan Blum")
+        result = self.movie.add_actor("Orlan Blum")
+        self.assertEqual("Orlan Blum is already added in the list of actors!", result)
+
+    def test_gt_if_rating_is_greater(self):
+        movie1 = Movie("Troy", 2003, 20)
+        movie2 = Movie("Odyssey", 2006, 18)
+        result = movie1 > movie2
+        self.assertEqual('"Troy" is better than "Odyssey"', result)
+
+    def test_gt_if_rating_is_lower(self):
+        movie1 = Movie("Troy", 2003, 20)
+        movie2 = Movie("Odyssey", 2006, 22)
+        result = movie1 > movie2
+        self.assertEqual('"Odyssey" is better than "Troy"', result)
+
+    def test_repr_with_two_actor(self):
+        self.movie = Movie("Troy", 2003, 20)
+        self.movie.add_actor("Brad Pit")
+        self.movie.add_actor("Orlando Blum")
+        self.assertEqual("Name: Troy\nYear of Release: 2003\nRating: 20.00\nCast: Brad Pit, Orlando Blum", self.movie.__repr__())
+
+
+if __name__ == "__main__":
+    main()
