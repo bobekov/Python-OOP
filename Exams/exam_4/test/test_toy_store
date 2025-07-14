@@ -1,0 +1,44 @@
+from unittest import TestCase, main
+
+from project.toy_store import ToyStore
+
+
+class TestToyStore(TestCase):
+    def setUp(self):
+        self.toy_store = ToyStore()
+
+    def test_add_toy_success(self):
+        result = self.toy_store.add_toy("A", "Teddy Bear")
+        self.assertEqual(result, "Toy:Teddy Bear placed successfully!")
+
+    def test_add_toy_already_exists(self):
+        self.toy_store.add_toy("B", "Action Figure")
+
+        with self.assertRaises(Exception) as context:
+            self.toy_store.add_toy("B", "Action Figure")
+        self.assertEqual(str(context.exception), "Toy is already in shelf!")
+
+    def test_add_toy_invalid_shelf(self):
+        with self.assertRaises(Exception) as context:
+            self.toy_store.add_toy("X", "Robot")
+        self.assertEqual(str(context.exception), "Shelf doesn't exist!")
+
+    def test_remove_toy_success(self):
+        self.toy_store.add_toy("C", "Doll")
+
+        result = self.toy_store.remove_toy("C", "Doll")
+        self.assertEqual(result, "Remove toy:Doll successfully!")
+
+    def test_remove_toy_nonexistent_toy(self):
+        with self.assertRaises(Exception) as context:
+            self.toy_store.remove_toy("D", "Car")
+        self.assertEqual(str(context.exception), "Toy in that shelf doesn't exists!")
+
+    def test_remove_toy_invalid_shelf(self):
+        with self.assertRaises(Exception) as context:
+            self.toy_store.remove_toy("Y", "Train")
+        self.assertEqual(str(context.exception), "Shelf doesn't exist!")
+
+
+if __name__ == '__main__':
+    main()
